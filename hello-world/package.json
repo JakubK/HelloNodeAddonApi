@@ -1,5 +1,4 @@
 {
-  "main": "lib/binding.js",
   "scripts": {
     "configure": "node-gyp configure",
     "build": "node-gyp build",
