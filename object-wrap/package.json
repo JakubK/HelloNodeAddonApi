@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "configure": "node-gyp configure",
+    "build": "node-gyp build",
+    "test": "node --napi-modules ./test/test-binding.js"
+  },
+  "gypfile": true,
+  "name": "object-wrap",
+  "version": "1.0.0",
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "bindings": "^1.5.0",
+    "node-addon-api": "^8.3.0",
+    "node-gyp": "^11.0.0"
+  }
+}
