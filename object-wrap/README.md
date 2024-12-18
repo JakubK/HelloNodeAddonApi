@@ -1,9 +1,8 @@
-## hello-world
+## object-wrap
 
-Introduces methods:
-- `hello` returning string "world"
-- `add` returning sum of 2 given numbers
-- `asArray` returning array of given numbers
+Introduces `ObjectWrapDemo` class with:
+- `greet` method taking string as input and printing to stdout, and returning string 
+
 ## Getting started
 
 ### Prerequisites
