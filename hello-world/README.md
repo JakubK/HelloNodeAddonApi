@@ -5,6 +5,7 @@ Introduces methods:
 - `add` returning sum of 2 given numbers
 - `asArray` returning array of given numbers
 - `messageBox` Uses `MessageBox` from windows api to with given title and message
+- `getCounter` and `incrementCounter` for interacting with static counter
 ## Getting started
 
 ### Prerequisites

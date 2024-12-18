@@ -30,6 +30,18 @@ Napi::Array AsArrayMethod(const Napi::CallbackInfo& info) {
   return tab;
 }
 
+
+static int counter = 0;
+
+Napi::Number GetCounter(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  return Napi::Number::New(env, counter);
+}
+
+void IncrementCounter(const Napi::CallbackInfo& info) {
+  counter++;
+}
+
 void MessageBoxMethod(const Napi::CallbackInfo& info) {
   std::string titleString = info[0].As<Napi::String>();
   auto lpTitle = titleString.c_str();
@@ -50,6 +62,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "add"), Napi::Function::New(env, AddMethod));
   exports.Set(Napi::String::New(env, "asArray"), Napi::Function::New(env, AsArrayMethod));
   exports.Set(Napi::String::New(env, "messageBox"), Napi::Function::New(env, MessageBoxMethod));
+  
+  exports.Set(Napi::String::New(env, "getCounter"), Napi::Function::New(env, GetCounter));
+  exports.Set(Napi::String::New(env, "incrementCounter"), Napi::Function::New(env, IncrementCounter));
   
   return exports;
 }
