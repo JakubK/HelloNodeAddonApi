@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <cstring>  // For strncpy_s
 #include <string>
+#include <iostream>
 
 using namespace Napi;
 
@@ -66,7 +67,6 @@ Napi::Number WriteResponse(const Napi::CallbackInfo& info) {
   return Napi::Number::New(env, 0);
 }
 
-
 Napi::String ReadCommand(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   return Napi::String::New(env, pBuf->command);
@@ -77,7 +77,7 @@ Napi::String ReadResponse(const Napi::CallbackInfo& info) {
   return Napi::String::New(env, pBuf->response);
 }
 
-void CleanFileMapping() {
+void CleanFileMapping(const Napi::CallbackInfo& info) {
   if (pBuf != NULL) {
     UnmapViewOfFile(pBuf);
     pBuf = NULL;
@@ -87,7 +87,6 @@ void CleanFileMapping() {
     hMapFile = NULL;
   }
 }
-
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "initFileMapping"), Napi::Function::New(env, InitFileMapping));
@@ -99,6 +98,5 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   
   return exports;
 }
-
 
 NODE_API_MODULE(addon, Init)
