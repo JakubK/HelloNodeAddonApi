@@ -2,7 +2,7 @@
   'targets': [
     {
       'target_name': 'object-wrap-native',
-      'sources': [ 'src/object-wrap.h', 'src/object-wrap.cc' ],
+      'sources': [ 'src/object-wrap.cc' ],
       'include_dirs': ["<!@(node -p \"require('node-addon-api').include\")"],
       'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
       'cflags!': [ '-fno-exceptions' ],
