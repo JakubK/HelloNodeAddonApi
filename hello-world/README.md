@@ -4,6 +4,7 @@ Introduces methods:
 - `hello` returning string "world"
 - `add` returning sum of 2 given numbers
 - `asArray` returning array of given numbers
+- `messageBox` Uses `MessageBox` from windows api to with given title and message
 ## Getting started
 
 ### Prerequisites

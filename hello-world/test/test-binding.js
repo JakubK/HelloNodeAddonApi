@@ -1,9 +1,10 @@
-const { hello, add, asArray } = require("bindings")("../build/Release/hello-world-native.node");
+const { hello, add, asArray, messageBox } = require("bindings")("../build/Release/hello-world-native.node");
 const assert = require("assert");
 
 assert(hello, "The expected function is undefined");
 assert(add, "The expected function is undefined");
 assert(asArray, "The expected function is undefined");
+assert(messageBox, "The expected function is undefined");
 
 function testBasic()
 {
@@ -19,5 +20,7 @@ function testBasic()
 }
 
 assert.doesNotThrow(testBasic, undefined, "testBasic threw an expection");
+
+messageBox("This is title", "This is content")
 
 console.log("Tests passed- everything looks OK!");
