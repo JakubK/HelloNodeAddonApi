@@ -2,7 +2,8 @@
   "scripts": {
     "configure": "node-gyp configure",
     "build": "node-gyp build",
-    "test": "node --napi-modules ./test/test-binding.js"
+    "client": "node --napi-modules ./test/client.js",
+    "server": "node --napi-modules ./test/server.js"
   },
   "gypfile": true,
   "name": "shared-memory",

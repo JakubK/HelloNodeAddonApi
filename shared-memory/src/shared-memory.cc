@@ -21,7 +21,7 @@ Napi::Number InitFileMapping(const Napi::CallbackInfo& info) {
     NULL,                    // Default security attributes
     PAGE_READWRITE,          // Read/write access
     0,                       // Maximum object size (high-order DWORD)
-    1024,                    // Maximum object size (low-order DWORD)
+    sizeof(SharedMemory),                    // Maximum object size (low-order DWORD)
     "Global\\MySharedMemory" // Name of the shared memory object
   );
 
@@ -69,12 +69,23 @@ Napi::Number WriteResponse(const Napi::CallbackInfo& info) {
 
 Napi::String ReadCommand(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  return Napi::String::New(env, pBuf->command);
+
+  auto command = Napi::String::New(env, pBuf->command);
+
+  // Reset buffer 
+  strncpy_s(pBuf->command, sizeof(pBuf->command), "", _TRUNCATE);
+
+  return command;
 }
 
 Napi::String ReadResponse(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  return Napi::String::New(env, pBuf->response);
+  auto response = Napi::String::New(env, pBuf->response);
+
+  // Reset buffer 
+  strncpy_s(pBuf->response, sizeof(pBuf->response), "", _TRUNCATE);
+
+  return response;
 }
 
 void CleanFileMapping(const Napi::CallbackInfo& info) {
