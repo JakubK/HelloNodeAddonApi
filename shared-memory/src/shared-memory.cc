@@ -13,6 +13,10 @@ struct SharedMemory {
 
 static HANDLE hMapFile = NULL;
 static SharedMemory* pBuf = NULL;
+static HANDLE hMutex = NULL;
+
+static HANDLE hClientCommandEvent = NULL;
+static HANDLE hServerProcessedEvent = NULL;
 
 Napi::Number InitFileMapping(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
@@ -46,6 +50,31 @@ Napi::Number InitFileMapping(const Napi::CallbackInfo& info) {
     return Napi::Number::New(env, 1);
   }
 
+  hMutex = CreateMutex(NULL, FALSE, "Global\\MySharedMemoryMutex");
+  if (hMutex == NULL) {
+    printf("Could not create mutex: %d", GetLastError());
+    UnmapViewOfFile(hMapFile);
+    CloseHandle(hMapFile);
+    return Napi::Number::New(env, 1);
+  }
+
+  hClientCommandEvent = CreateEvent(NULL, FALSE, FALSE, "Global\\ClientCommandEvent");
+  if (hClientCommandEvent == NULL) {
+    printf("Could not create client event: %d", GetLastError());
+    return Napi::Number::New(env, 1);
+  }
+
+  
+  hServerProcessedEvent = CreateEvent(NULL, FALSE, FALSE, "Global\\ServerProcessedEvent");
+  if (hServerProcessedEvent == NULL) {
+    printf("Could not create server event: %d", GetLastError());
+    return Napi::Number::New(env, 1);
+  }
+
+  // Reset shared memory
+  strncpy_s(pBuf->command, sizeof(pBuf->command), "", _TRUNCATE);
+  strncpy_s(pBuf->response, sizeof(pBuf->response), "", _TRUNCATE);
+
   return Napi::Number::New(env, 0);
 }
 
@@ -53,38 +82,44 @@ Napi::Number SendCommand(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   std::string payloadString = info[0].As<Napi::String>();
   auto payload = payloadString.c_str();
+
+  WaitForSingleObject(hMutex, INFINITE);
   strncpy_s(pBuf->command, sizeof(pBuf->command), payload, _TRUNCATE);
-
-  return Napi::Number::New(env, 0);
-}
-
-Napi::Number WriteResponse(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
-  std::string payloadString = info[0].As<Napi::String>();
-  auto payload = payloadString.c_str();
-  strncpy_s(pBuf->response, sizeof(pBuf->response), payload, _TRUNCATE);
+  SetEvent(hClientCommandEvent);
+  WaitForSingleObject(hServerProcessedEvent, INFINITE);
+  ReleaseMutex(hMutex);
 
   return Napi::Number::New(env, 0);
 }
 
 Napi::String ReadCommand(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-
+  WaitForSingleObject(hClientCommandEvent, INFINITE);
   auto command = Napi::String::New(env, pBuf->command);
-
-  // Reset buffer 
-  strncpy_s(pBuf->command, sizeof(pBuf->command), "", _TRUNCATE);
+  SetEvent(hServerProcessedEvent);
 
   return command;
 }
 
+Napi::Number WriteResponse(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  std::string payloadString = info[0].As<Napi::String>();
+  auto payload = payloadString.c_str();
+
+  WaitForSingleObject(hMutex, INFINITE);
+  strncpy_s(pBuf->response, sizeof(pBuf->response), payload, _TRUNCATE);
+  ReleaseMutex(hMutex);
+
+  return Napi::Number::New(env, 0);
+}
+
 Napi::String ReadResponse(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
+  WaitForSingleObject(hMutex, INFINITE);
   auto response = Napi::String::New(env, pBuf->response);
-
-  // Reset buffer 
+  // Reset buffer
   strncpy_s(pBuf->response, sizeof(pBuf->response), "", _TRUNCATE);
-
+  ReleaseMutex(hMutex);
   return response;
 }
 
@@ -96,6 +131,18 @@ void CleanFileMapping(const Napi::CallbackInfo& info) {
   if (hMapFile != NULL) {
     CloseHandle(hMapFile);
     hMapFile = NULL;
+  }
+  if (hMutex != NULL) {
+    CloseHandle(hMutex);
+    hMutex = NULL;
+  }
+  if (hClientCommandEvent != NULL) {
+    CloseHandle(hClientCommandEvent);
+    hClientCommandEvent = NULL;
+  }
+  if (hServerProcessedEvent != NULL) {
+    CloseHandle(hServerProcessedEvent);
+    hServerProcessedEvent = NULL;
   }
 }
 

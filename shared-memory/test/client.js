@@ -8,7 +8,8 @@ const {
 initFileMapping();
 
 sendCommand("SomeCommand");
-sendCommand("SomeCommand1");
+sendCommand("AnotherCommand");
+sendCommand("Test");
 sendCommand("exit");
 
 // readResponse();

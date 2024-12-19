@@ -20,4 +20,6 @@ do {
 } 
 while(command !== "exit")
 
+console.log(command);
+
 cleanFileMapping();
