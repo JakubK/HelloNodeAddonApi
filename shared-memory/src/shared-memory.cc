@@ -1,6 +1,5 @@
 #include <napi.h>
 #include <windows.h>
-#include <cstring>  // For strncpy_s
 #include <string>
 #include <iostream>
 
@@ -123,27 +122,22 @@ Napi::String ReadResponse(const Napi::CallbackInfo& info) {
   return response;
 }
 
+void TryCleanHandle(HANDLE h) {
+  if (h != NULL) {
+    CloseHandle(h);
+    h = NULL;
+  }
+}
+
 void CleanFileMapping(const Napi::CallbackInfo& info) {
   if (pBuf != NULL) {
     UnmapViewOfFile(pBuf);
     pBuf = NULL;
   }
-  if (hMapFile != NULL) {
-    CloseHandle(hMapFile);
-    hMapFile = NULL;
-  }
-  if (hMutex != NULL) {
-    CloseHandle(hMutex);
-    hMutex = NULL;
-  }
-  if (hClientCommandEvent != NULL) {
-    CloseHandle(hClientCommandEvent);
-    hClientCommandEvent = NULL;
-  }
-  if (hServerProcessedEvent != NULL) {
-    CloseHandle(hServerProcessedEvent);
-    hServerProcessedEvent = NULL;
-  }
+  TryCleanHandle(hMapFile);
+  TryCleanHandle(hMutex);
+  TryCleanHandle(hClientCommandEvent);
+  TryCleanHandle(hServerProcessedEvent);
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
