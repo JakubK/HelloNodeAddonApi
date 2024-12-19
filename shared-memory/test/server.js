@@ -5,6 +5,9 @@ const {
     cleanFileMapping
 } = require("bindings")("../build/Release/shared-memory-native.node");
 
+
+let counter = 0;
+
 initFileMapping();
 
 
@@ -14,11 +17,24 @@ let command = readCommand();
 
 do {
     if (command !== '') {
-        console.log("Received command: " + command);
+        if (command === 'inc') {
+            counter++;
+            writeResponse("counter:" + counter);
+        } else {
+            try {
+                const cmd = JSON.parse(command);
+                if (cmd.type = "WriteMsg") {
+                    console.log("[Server] " + cmd.message);
+                }
+            } catch {
+                console.log("Received command: " + command);
+            }
+        }
+
     }
     command = readCommand();
-} 
-while(command !== "exit")
+}
+while (command !== "exit")
 
 console.log(command);
 
