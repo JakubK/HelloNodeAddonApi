@@ -1,5 +1,3 @@
 # HelloNodeAddonApi
-Learning node addon api
-
-Mostly toying with code from:
+Learning node addon api to wrap WinApi & Toying with code from:
 https://nodejs.github.io/node-addon-examples/
