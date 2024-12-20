@@ -1,15 +1,17 @@
+import bindings from "bindings";
+import { SharedMemoryType } from "../types";
+
 const {
     initFileMapping,
     readCommand,
     writeResponse,
     cleanFileMapping
-} = require("bindings")("../build/Release/shared-memory-native.node");
+} = bindings("../build/Release/shared-memory-native.node") as SharedMemoryType;
 
 
 let counter = 0;
 
 initFileMapping();
-
 
 console.log("[Server] has started listening");
 

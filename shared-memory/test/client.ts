@@ -1,9 +1,12 @@
+import bindings from "bindings";
+import { SharedMemoryType } from "../types";
+
 const {
     initFileMapping,
     sendCommand,
     readResponse,
     cleanFileMapping
-} = require("bindings")("../build/Release/shared-memory-native.node");
+} = bindings("../build/Release/shared-memory-native.node") as SharedMemoryType
 
 initFileMapping();
 

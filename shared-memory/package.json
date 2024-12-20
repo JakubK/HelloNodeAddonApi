@@ -1,19 +1,22 @@
 {
+  "name": "shared-memory",
   "scripts": {
     "configure": "node-gyp configure",
     "build": "node-gyp build",
-    "client": "node --napi-modules ./test/client.js",
-    "server": "node --napi-modules ./test/server.js"
+    "client": "ts-node ./test/client.ts",
+    "server": "ts-node ./test/server.ts"
   },
   "gypfile": true,
-  "name": "shared-memory",
   "version": "1.0.0",
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/bindings": "^1.5.5",
     "bindings": "^1.5.0",
     "node-addon-api": "^8.3.0",
-    "node-gyp": "^11.0.0"
+    "node-gyp": "^11.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
   }
 }
